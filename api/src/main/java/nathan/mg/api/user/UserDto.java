@@ -1,8 +1,10 @@
 package nathan.mg.api.user;
 
-import jakarta.validation.constraints.Email;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import nathan.mg.api.store.StoreDto;
 
 public record UserDto(
 		@NotBlank
@@ -11,7 +13,8 @@ public record UserDto(
 		@Email
 		String email,
 		@NotBlank
-		@Pattern(regexp = "\\d{6,10}")
 		String password,
-		String photo
+		String photo,
+		@Valid
+		StoreDto store
 ) {}

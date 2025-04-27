@@ -1,4 +1,4 @@
-package nathan.mg.api.store;
+package nathan.mg.api.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,13 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import nathan.mg.api.shared.Role;
+import nathan.mg.api.store.Store;
+import nathan.mg.api.store.StoreRepository;
+import nathan.mg.api.user.Role;
 import nathan.mg.api.user.User;
+import nathan.mg.api.user.UserDto;
 import nathan.mg.api.user.UserRepository;
 
 @RestController
 @RequestMapping("store")
-public class StoreController {
+public class AuthController {
 	
 	@Autowired
 	private StoreRepository storeRepository;
@@ -24,14 +27,15 @@ public class StoreController {
 	
 	@PostMapping
 	@Transactional
-	public void register(@RequestBody @Valid StoreDto storeDto) {
-        User admin = new User(storeDto.admin());
-        admin.setRole(Role.ADMIN);
-        userRepository.save(admin);
+	public void register(@RequestBody @Valid UserDto user) {
+        Store store = new Store(user.store());
         
-        Store store = new Store(storeDto);
-        store.setAdmin(admin);
+        User admin = new User(user);
+        admin.setStore(store);
+        admin.setRole(Role.ADMIN);
+        
         storeRepository.save(store);
+        userRepository.save(admin);
 	}
 	
 }
