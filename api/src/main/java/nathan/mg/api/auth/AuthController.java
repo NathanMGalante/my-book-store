@@ -30,9 +30,7 @@ public class AuthController {
 	public void register(@RequestBody @Valid UserDto user) {
         Store store = new Store(user.store());
         
-        User admin = new User(user);
-        admin.setStore(store);
-        admin.setRole(Role.ADMIN);
+        User admin = new User(user, store, Role.ADMIN);
         
         storeRepository.save(store);
         userRepository.save(admin);

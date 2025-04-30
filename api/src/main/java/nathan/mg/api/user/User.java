@@ -32,18 +32,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role = Role.GUEST;
 
-    public User(UserDto user) {
+    public User(UserDto user, Store store) {
+    	this(user, store, Role.GUEST);
+    }
+
+    public User(UserDto user, Store store, Role role) {
         this.name = user.name();
         this.email = user.email();
         this.password = user.password();
         this.photo = user.photo();
-    }
-    
-    public void setRole(Role role) {
-        this.role = role;
-    }
-    
-    public void setStore(Store store) {
         this.store = store;
+        this.role = role;
     }
 }
