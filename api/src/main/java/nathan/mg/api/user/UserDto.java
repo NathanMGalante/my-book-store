@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import nathan.mg.api.store.StoreDto;
+import nathan.mg.api.store.StoreRequestDto;
 
 public record UserDto(
 		@NotBlank
@@ -16,5 +16,5 @@ public record UserDto(
 		String password,
 		String photo,
 		@Valid
-		StoreDto store
+		StoreRequestDto store
 ) {}

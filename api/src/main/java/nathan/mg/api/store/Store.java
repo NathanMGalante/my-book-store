@@ -23,7 +23,7 @@ public class Store {
     @Column(columnDefinition = "LONGTEXT", nullable = true)
     private String banner;
 
-    public Store(StoreDto store) {
+    public Store(StoreRequestDto store) {
     	this.creationDateTime = LocalDateTime.now();
         this.name = store.name();
         this.slogan = store.slogan();

@@ -2,7 +2,7 @@ package nathan.mg.api.store;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record StoreDto(
+public record StoreRequestDto(
 		@NotBlank
 		String name,
 		@NotBlank
