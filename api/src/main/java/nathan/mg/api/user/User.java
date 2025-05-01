@@ -1,5 +1,7 @@
 package nathan.mg.api.user;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -15,6 +17,8 @@ import nathan.mg.api.store.Store;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime creationDateTime;
 
     private String name;
 
@@ -37,6 +41,7 @@ public class User {
     }
 
     public User(UserDto user, Store store, Role role) {
+    	this.creationDateTime = LocalDateTime.now();
         this.name = user.name();
         this.email = user.email();
         this.password = user.password();

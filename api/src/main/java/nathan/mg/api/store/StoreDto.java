@@ -8,4 +8,5 @@ public record StoreDto(
 		@NotBlank
 		String slogan,
 		String banner
-) {}
+) {
+}

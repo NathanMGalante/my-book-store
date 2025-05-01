@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS store (
     name VARCHAR(100) NOT NULL,
     slogan VARCHAR(240) NOT NULL,
     banner LONGTEXT NULL,
+    creation_date_time DATETIME NOT NULL,
     PRIMARY KEY(id)
 ) ENGINE=InnoDB;
 
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS user (
     photo LONGTEXT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'GUEST',
     store_id BIGINT NOT NULL,
+    creation_date_time DATETIME NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (store_id) REFERENCES store(id)
 ) ENGINE=InnoDB;
