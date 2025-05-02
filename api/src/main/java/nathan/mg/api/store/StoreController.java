@@ -58,7 +58,7 @@ public class StoreController {
 
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity deleteStore(@PathVariable Long id) {
+	public ResponseEntity<?> deleteStore(@PathVariable Long id) {
 		repository.getReferenceById(id).delete();
 		
 		return ResponseEntity.noContent().build();

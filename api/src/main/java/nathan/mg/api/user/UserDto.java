@@ -7,12 +7,12 @@ import jakarta.validation.constraints.Pattern;
 import nathan.mg.api.store.StoreRequestDto;
 
 public record UserDto(
-		@NotBlank
+		@NotBlank(message = "Nome obrigatório")
 		String name,
-		@NotBlank
-		@Email
+		@NotBlank(message = "Email obrigatório")
+		@Email(message = "Email inválido")
 		String email,
-		@NotBlank
+		@NotBlank(message = "Senha obrigatória")
 		String password,
 		String photo,
 		@Valid
