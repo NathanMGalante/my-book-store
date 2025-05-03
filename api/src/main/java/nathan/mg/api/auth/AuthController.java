@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import nathan.mg.api.config.TokenService;
+import nathan.mg.api.config.security.TokenService;
 import nathan.mg.api.user.User;
 
 @RestController
