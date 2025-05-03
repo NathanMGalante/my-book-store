@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +32,16 @@ public class StoreController {
 
 	@Autowired
     private UserRepository userRepository; 
+	
+	@Autowired
+    private PasswordEncoder passwordEncoder;
 
 	@PostMapping
 	@Transactional
 	public ResponseEntity<StoreResponseDto> register(@RequestBody @Valid UserDto data, UriComponentsBuilder uriBuilder) {
         Store store = new Store(data.store());
         
-        User admin = new User(data, store, Role.ADMIN);
+        User admin = new User(data.name(), data.email(), passwordEncoder.encode(data.password()), data.photo(), store, Role.ROLE_ADMIN);
         
         repository.save(store);
         userRepository.save(admin);

@@ -1,6 +1,12 @@
 package nathan.mg.api.user;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,8 +20,8 @@ import nathan.mg.api.store.Store;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class User implements UserDetails {
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, updatable = false)
     private LocalDateTime creationDateTime;
@@ -34,19 +40,34 @@ public class User {
     private Store store;
 
     @Enumerated(EnumType.STRING)
-    private Role role = Role.GUEST;
+    private Role role = Role.ROLE_GUEST;
 
-    public User(UserDto user, Store store) {
-    	this(user, store, Role.GUEST);
-    }
-
-    public User(UserDto user, Store store, Role role) {
-    	this.creationDateTime = LocalDateTime.now();
-        this.name = user.name();
-        this.email = user.email();
-        this.password = user.password();
-        this.photo = user.photo();
+    public User(String name, String email, String password, String photo, Store store, Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.photo = photo;
         this.store = store;
         this.role = role;
+    	this.creationDateTime = LocalDateTime.now();
     }
+
+    public User(String name, String email, String password, String photo, Store store) {
+    	this(name, email, password, photo, store, Role.ROLE_GUEST);
+    }
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority(this.role.name()));
+	}
+	
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		return email;
+	}
 }
