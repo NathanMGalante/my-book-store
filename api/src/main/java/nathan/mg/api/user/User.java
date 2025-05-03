@@ -3,6 +3,7 @@ package nathan.mg.api.user;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -69,5 +70,9 @@ public class User implements UserDetails {
 	@Override
 	public String getUsername() {
 		return email;
+	}
+	
+	public List<String> getAuthoritiesAsStringList() {
+	    return this.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 	}
 }
