@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,6 +53,7 @@ public class StoreController {
 	}
 
 	@PutMapping("/{id}")
+	@Secured({"ROLE_ADMIN"})
 	@Transactional
 	public ResponseEntity<StoreResponseDto> updateStore(@PathVariable Long id, @RequestBody @Valid StoreRequestDto data) {
         var store = repository.getReferenceById(id);
@@ -61,6 +63,7 @@ public class StoreController {
 	}
 
 	@DeleteMapping("/{id}")
+	@Secured({"ROLE_ADMIN"})
 	@Transactional
 	public ResponseEntity<?> deleteStore(@PathVariable Long id) {
 		repository.getReferenceById(id).delete();
@@ -69,12 +72,14 @@ public class StoreController {
 	}
 
 	@GetMapping("/{id}")
+	@Secured({"ROLE_ADMIN"})
 	public ResponseEntity<StoreResponseDto> getStore(@PathVariable Long id) {
 		var store = repository.getReferenceById(id);
 		return ResponseEntity.ok(new StoreResponseDto(store));
 	}
 
 	@GetMapping
+	@Secured({"ROLE_ADMIN"})
 	public ResponseEntity<Page<StoreResponseDto>> getStores(@PageableDefault(size = 10, sort = {"name"}) Pageable pagination) {
         var page = repository.findAllByDeletionDateTimeNull(pagination).map(StoreResponseDto::new);
         
