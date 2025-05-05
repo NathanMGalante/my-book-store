@@ -5,7 +5,7 @@ import 'package:mybookstore/shared/utils/preference_utils.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Env.setBaseUrl('https://api-flutter-prova.hml.sesisenai.org.br/');
+  Env.setBaseUrl('http://10.0.2.2:8080/');
 
   await PreferenceUtils.init();
 

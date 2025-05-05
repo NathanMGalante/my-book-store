@@ -40,9 +40,9 @@ class AuthController {
 
   User? get user => auth?.user;
 
-  String? get token => auth?.token;
+  String? get token => auth?.accessToken;
 
-  bool get isAdmin => user?.role == 'Admin';
+  bool get isAdmin => user?.email == 'Admin';
 
   Observer<bool> isRegistering = false.obs();
   Observer<bool> isLogging = false.obs();
@@ -54,7 +54,7 @@ class AuthController {
   }) async {
     try {
       isLogging.value = true;
-      final payload = {'user': userName, 'password': password};
+      final payload = {'username': userName, 'password': password};
       final response = await _api.login(payload);
       auth = Auth.fromJson(response.data);
       nextTick(() => redirect(context));
@@ -99,7 +99,7 @@ class AuthController {
     final response = await _api.refreshToken(payload);
     final data = jsonDecode(response.data);
     auth = auth!.copyWith(
-      token: data['token'],
+      accessToken: data['accessToken'],
       refreshToken: data['refreshToken'],
     );
     return token!;

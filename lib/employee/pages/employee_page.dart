@@ -56,7 +56,7 @@ class EmployeePage extends StatelessWidget {
                                     id: employee.id,
                                     name: employee.username,
                                     photo: employee.photo,
-                                    role: 'Employee',
+                                    email: 'Employee',
                                   ),
                                   radius: 20,
                                 ),
