@@ -13,6 +13,7 @@ import 'package:mybookstore/shared/utils/file_utils.dart';
 import 'package:mybookstore/shared/utils/global_utils.dart';
 import 'package:mybookstore/shared/utils/navigation_utils.dart';
 import 'package:mybookstore/shared/utils/preference_utils.dart';
+import 'package:mybookstore/shared/utils/role_utils.dart';
 import 'package:mybookstore/shared/utils/snackbar_utils.dart';
 
 class AuthController {
@@ -42,7 +43,20 @@ class AuthController {
 
   String? get token => auth?.accessToken;
 
-  bool get isAdmin => user?.email == 'Admin';
+  List<String> _getAuthorities() {
+    if (token == null) return [];
+    final decodedToken = JwtDecoder.decode(token!);
+    return decodedToken['authorities'];
+  }
+
+  bool hasAuthority(Role role) {
+    return _getAuthorities().contains(role.value);
+  }
+
+  bool hasAnyAuthority(List<Role> roles) {
+    final authorities = _getAuthorities();
+    return roles.any((role) => authorities.contains(role.value));
+  }
 
   Observer<bool> isRegistering = false.obs();
   Observer<bool> isLogging = false.obs();
@@ -57,7 +71,7 @@ class AuthController {
       final payload = {'username': userName, 'password': password};
       final response = await _api.login(payload);
       auth = Auth.fromJson(response.data);
-      nextTick(() => redirect(context));
+      nextTick(() => _redirect(context));
     } on DioException catch (ex) {
       context.showSnackBar(
         ex.response?.data == null || ex.response!.data!.toString().isEmpty
@@ -71,11 +85,8 @@ class AuthController {
     }
   }
 
-  Future<Object?> redirect(BuildContext context) {
-    if (isAdmin) {
-      return Navigator.of(context).pushReplacementNamed('/admin');
-    }
-    return Navigator.of(context).pushReplacementNamed('/employee');
+  Future<void> _redirect(BuildContext context) {
+    return NavigationController.of(context).goToHome(context);
   }
 
   Future<void> validateToken(context) async {
@@ -84,13 +95,13 @@ class AuthController {
     } else if (JwtDecoder.isExpired(token!)) {
       try {
         await refreshToken();
-        nextTick(() => redirect(context));
+        nextTick(() => _redirect(context));
       } catch (ex) {
         nextTick(() => replacePage(context, LoginPage()));
         rethrow;
       }
     } else {
-      nextTick(() => redirect(context));
+      nextTick(() => _redirect(context));
     }
   }
 

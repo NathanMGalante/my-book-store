@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybookstore/auth/pages/auth_page.dart';
 import 'package:mybookstore/shared/utils/color_utils.dart';
-import 'package:mybookstore/shared/widgets/admin_navigation_wrapper.dart';
-import 'package:mybookstore/shared/widgets/employee_navigation_wrapper.dart';
+import 'package:mybookstore/shared/utils/navigation_utils.dart';
+import 'package:mybookstore/shared/widgets/child_builder.dart';
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -68,22 +68,23 @@ class AppModule extends StatelessWidget {
           secondary: secondaryColor,
         ),
       ),
-      builder: (context, child) {
-        if (isHml) {
-          return Banner(
-            message: 'QA',
-            location: BannerLocation.topStart,
-            color: bannerColor,
-            child: child,
-          );
-        }
-        return child ?? SizedBox.shrink();
+      builder: (context, page) {
+        return ChildBuilder(
+          builder: (context, child) {
+            if (isHml) {
+              return Banner(
+                message: 'QA',
+                location: BannerLocation.topStart,
+                color: bannerColor,
+                child: child,
+              );
+            }
+            return child;
+          },
+          child: NavigationController(child: page ?? SizedBox.shrink()),
+        );
       },
       home: const AuthPage(),
-      routes: {
-        '/admin': (context) => const AdminNavigationWrapper(),
-        '/employee': (context) => const EmployeeNavigationWrapper(),
-      },
     );
   }
 }
