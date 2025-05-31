@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mybookstore/app/book_edit/pages/book_edit_page.dart';
+import 'package:mybookstore/app/bookmark/pages/bookmark_page.dart';
+import 'package:mybookstore/app/employee/pages/employee_page.dart';
+import 'package:mybookstore/app/home/pages/guest_home_page.dart';
+import 'package:mybookstore/app/home/pages/home_page.dart';
+import 'package:mybookstore/app/profile/pages/profile_page.dart';
 import 'package:mybookstore/auth/controller.dart';
-import 'package:mybookstore/book_edit/pages/book_edit_page.dart';
-import 'package:mybookstore/bookmark/pages/bookmark_page.dart';
-import 'package:mybookstore/employee/pages/employee_page.dart';
-import 'package:mybookstore/home/pages/guest_home_page.dart';
-import 'package:mybookstore/home/pages/home_page.dart';
-import 'package:mybookstore/profile/pages/profile_page.dart';
 import 'package:mybookstore/shared/utils/image_path_utils.dart';
 import 'package:mybookstore/shared/utils/role_utils.dart';
 
@@ -97,30 +97,37 @@ class NavigationItem {
 class NavigationController extends InheritedWidget {
   NavigationController({super.key, required super.child});
 
-  final ValueNotifier currentIndex = ValueNotifier(0);
+  final ValueNotifier<int?> currentIndex = ValueNotifier(null);
 
-  Future<void> goToHome(BuildContext context) => changePage(context, 0);
+  Future<void> goToHome(BuildContext context) {
+    return changePage(context, 0);
+  }
 
   Future<void> changePage(BuildContext context, int index) async {
-    final lastIndex = currentIndex.value;
-    currentIndex.value = index;
-    final routes = getNavigationRoutes();
-    final page = routes[index].page;
-    final pageBuilder = PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionDuration: Duration.zero,
-      reverseTransitionDuration: Duration.zero,
-    );
-    if (lastIndex == 0) {
-      await Navigator.push(context, pageBuilder);
-    } else {
-      await Navigator.pushReplacement(context, pageBuilder);
-    }
+    if (currentIndex.value != null && currentIndex.value == index) return;
+    // final lastIndex = currentIndex.value;
+    // final routes = getNavigationRoutes();
+    // final page = routes[index].page;
+    // final pageBuilder = PageRouteBuilder(
+    //   pageBuilder: (context, animation, secondaryAnimation) => page,
+    //   transitionDuration: Duration.zero,
+    //   reverseTransitionDuration: Duration.zero,
+    // );
+    // Future.delayed(Duration(milliseconds: 100), () {
+      currentIndex.value = index;
+    // });
+    // if (lastIndex == 0) {
+    //   await Navigator.push(context, pageBuilder);
+    // } else {
+    //   await Navigator.pushReplacement(context, pageBuilder);
+    // }
+    // Future.delayed(Duration(milliseconds: 100), () {
+    //   currentIndex.value = lastIndex;
+    // });
   }
 
   static NavigationController? maybeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<NavigationController>();
+    return context.dependOnInheritedWidgetOfExactType<NavigationController>();
   }
 
   static NavigationController of(BuildContext context) {

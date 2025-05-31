@@ -2,59 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mybookstore/bookmark/controller.dart';
-import 'package:mybookstore/bookmark/pages/bookmark_page.dart';
+import 'package:mybookstore/app/bookmark/controller.dart';
+import 'package:mybookstore/app/bookmark/pages/bookmark_page.dart';
+import 'package:mybookstore/app/home/controller.dart';
+import 'package:mybookstore/auth/controller.dart';
 import 'package:mybookstore/shared/models/book.dart';
 import 'package:mybookstore/shared/utils/bloc_utils.dart';
 import 'package:mybookstore/shared/utils/color_utils.dart';
+import 'package:mybookstore/shared/utils/date_time_utils.dart';
 import 'package:mybookstore/shared/utils/global_utils.dart';
 import 'package:mybookstore/shared/utils/image_path_utils.dart';
 import 'package:mybookstore/shared/utils/navigation_utils.dart';
-import 'package:mybookstore/shared/widgets/app_bar_back_button.dart';
+import 'package:mybookstore/shared/utils/role_utils.dart';
 import 'package:mybookstore/shared/widgets/custom_button.dart';
 
-class BookInfoPage extends StatefulWidget {
-  const BookInfoPage({
-    super.key,
-    required this.bookList,
-    required this.initialBook,
-  });
-
-  final List<Book> bookList;
-  final Book initialBook;
+class BookEditPage extends StatefulWidget {
+  const BookEditPage({super.key});
 
   @override
-  State<BookInfoPage> createState() => _BookInfoPageState();
+  State<BookEditPage> createState() => _BookEditPageState();
 }
 
-class _BookInfoPageState extends State<BookInfoPage> {
+class _BookEditPageState extends State<BookEditPage> {
   BookmarkController get controller => BookmarkController();
 
   late Observer<Book> selectedBook;
   final FlutterCarouselController carouselController =
       FlutterCarouselController();
 
-  @override
-  void initState() {
-    selectedBook = widget.initialBook.obs();
-    super.initState();
+  Future<List<Book>> _load() async {
+    final list = await HomeController().loadAllBooks();
+    selectedBook = list.first.obs();
+    return list;
   }
 
   Future<void> _saveBook(BuildContext context) async {
     await controller.saveBook(selectedBook.value);
-    await goTo(context, const BookMarkPage());
+    if (AuthController().hasAuthority(Role.admin)) {
+      await NavigationController.of(context).goToHome(context);
+    } else {
+      await NavigationController.of(context).changePage(context, 2);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: AppBarBackButton(),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-        body: SingleChildScrollView(
+    return FutureBuilder<List<Book>>(
+      future: _load(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Text(snapshot.error.toString());
+        }
+        final books = snapshot.data ?? [];
+        return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(top: 64.0, bottom: 16.0),
             child: Column(
@@ -68,22 +71,22 @@ class _BookInfoPageState extends State<BookInfoPage> {
                     enlargeCenterPage: true,
                     enlargeFactor: 0.1,
                     padEnds: true,
-                    initialPage: widget.bookList.indexOf(selectedBook.value),
+                    initialPage: books.indexOf(selectedBook.value),
                     showIndicator: false,
                     autoPlay: false,
                     controller: carouselController,
                     enableInfiniteScroll: false,
                     onPageChanged: (index, reason) {
-                      selectedBook.value = widget.bookList[index];
+                      selectedBook.value = books[index];
                     },
                   ),
                   items: [
-                    for (final book in widget.bookList)
+                    for (final book in books)
                       GestureDetector(
                         onTap: () {
                           selectedBook.value = book;
                           carouselController.animateToPage(
-                            widget.bookList.indexOf(book),
+                            books.indexOf(book),
                           );
                         },
                         child: Image.asset(bookImage, fit: BoxFit.fitWidth),
@@ -109,9 +112,9 @@ class _BookInfoPageState extends State<BookInfoPage> {
                                 switchInCurve: Curves.easeInOut,
                                 switchOutCurve: Curves.easeInOut,
                                 transitionBuilder: (
-                                  Widget child,
-                                  Animation<double> animation,
-                                ) {
+                                    Widget child,
+                                    Animation<double> animation,
+                                    ) {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: child,
@@ -133,9 +136,9 @@ class _BookInfoPageState extends State<BookInfoPage> {
                                 switchInCurve: Curves.easeInOut,
                                 switchOutCurve: Curves.easeInOut,
                                 transitionBuilder: (
-                                  Widget child,
-                                  Animation<double> animation,
-                                ) {
+                                    Widget child,
+                                    Animation<double> animation,
+                                    ) {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: child,
@@ -180,7 +183,8 @@ class _BookInfoPageState extends State<BookInfoPage> {
                             ],
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 'Publicado em',
@@ -192,7 +196,7 @@ class _BookInfoPageState extends State<BookInfoPage> {
                                 ),
                               ),
                               Text(
-                                selectedBook.value.year.toString(),
+                                selectedBook.value.publicationDate.formattedDate,
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 14.0,
@@ -218,7 +222,7 @@ class _BookInfoPageState extends State<BookInfoPage> {
                               Expanded(
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     for (int i = 0; i < 5; i++)
                                       Icon(
@@ -241,7 +245,8 @@ class _BookInfoPageState extends State<BookInfoPage> {
                                     value: selectedBook.value.available,
                                     onChanged: (value) {
                                       setState(() {
-                                        selectedBook.value.available = value;
+                                        selectedBook.value.available =
+                                            value;
                                       });
                                     },
                                   );
@@ -271,8 +276,8 @@ class _BookInfoPageState extends State<BookInfoPage> {
               ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

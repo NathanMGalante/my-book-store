@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mybookstore/app/profile/api.dart';
 import 'package:mybookstore/auth/controller.dart';
 import 'package:mybookstore/auth/models/store.dart';
-import 'package:mybookstore/profile/api.dart';
 import 'package:mybookstore/shared/utils/bloc_utils.dart';
 import 'package:mybookstore/shared/utils/global_utils.dart';
 import 'package:mybookstore/shared/utils/snackbar_utils.dart';
@@ -31,7 +31,6 @@ class ProfileController {
       await _api.edit(store.id, {
         'name': storeName,
         'slogan': sloganName,
-        'banner': store.banner,
       });
       store.name = storeName;
       store.slogan = sloganName;

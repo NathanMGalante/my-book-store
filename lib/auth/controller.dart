@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -15,6 +16,7 @@ import 'package:mybookstore/shared/utils/navigation_utils.dart';
 import 'package:mybookstore/shared/utils/preference_utils.dart';
 import 'package:mybookstore/shared/utils/role_utils.dart';
 import 'package:mybookstore/shared/utils/snackbar_utils.dart';
+import 'package:mybookstore/shared/widgets/navigation_wrapper.dart';
 
 class AuthController {
   static final AuthController _instance = AuthController._internal(AuthApi());
@@ -46,7 +48,7 @@ class AuthController {
   List<String> _getAuthorities() {
     if (token == null) return [];
     final decodedToken = JwtDecoder.decode(token!);
-    return decodedToken['authorities'];
+    return (decodedToken['authorities'] as List).whereType<String>().toList();
   }
 
   bool hasAuthority(Role role) {
@@ -86,7 +88,7 @@ class AuthController {
   }
 
   Future<void> _redirect(BuildContext context) {
-    return NavigationController.of(context).goToHome(context);
+    return replacePage(context, NavigationWrapper());
   }
 
   Future<void> validateToken(context) async {
@@ -105,15 +107,30 @@ class AuthController {
     }
   }
 
+  Completer<String>? refreshCompleter;
+
   Future<String> refreshToken() async {
-    final payload = {'refreshToken': auth!.refreshToken};
-    final response = await _api.refreshToken(payload);
-    final data = jsonDecode(response.data);
-    auth = auth!.copyWith(
-      accessToken: data['accessToken'],
-      refreshToken: data['refreshToken'],
-    );
-    return token!;
+    try {
+      if (refreshCompleter != null && !refreshCompleter!.isCompleted) {
+        return refreshCompleter!.future;
+      }
+      refreshCompleter = Completer();
+      final payload = {'refreshToken': auth!.refreshToken};
+      debugPrint('payload');
+      final response = await _api.refreshToken(payload);
+      debugPrint('response');
+      final data = jsonDecode(response.data);
+      auth = auth!.copyWith(
+        accessToken: data['accessToken'],
+        refreshToken: data['refreshToken'],
+      );
+      refreshCompleter!.complete(token!);
+      refreshCompleter = null;
+      return token!;
+    } catch (ex) {
+      debugPrint('refresh ex: $ex');
+      rethrow;
+    }
   }
 
   void logout(context, {bool inTheNextTick = false}) {

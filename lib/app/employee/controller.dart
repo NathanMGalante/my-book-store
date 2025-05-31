@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:mybookstore/app/employee/api.dart';
 import 'package:mybookstore/auth/controller.dart';
 import 'package:mybookstore/auth/models/store.dart';
-import 'package:mybookstore/employee/api.dart';
-import 'package:mybookstore/employee/models/employee.dart';
+import 'package:mybookstore/auth/models/user.dart';
 
 class EmployeeController {
   static final EmployeeController _instance = EmployeeController._internal(
@@ -18,10 +18,10 @@ class EmployeeController {
 
   Store? get store => AuthController().auth?.store;
 
-  Future<List<Employee>> loadEmployees() async {
+  Future<List<User>> loadEmployees() async {
     if (store == null) return [];
     final response = await _api.getEmployees(store!.id);
     final employees = jsonDecode(response.data) as List;
-    return employees.map((book) => Employee.fromMap(book)).toList();
+    return employees.map((book) => User.fromMap(book)).toList();
   }
 }

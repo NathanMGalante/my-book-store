@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybookstore/app/profile/controller.dart';
+import 'package:mybookstore/app/profile/widgets/profile_avatar.dart';
 import 'package:mybookstore/auth/controller.dart';
 import 'package:mybookstore/auth/models/store.dart';
 import 'package:mybookstore/auth/models/user.dart';
-import 'package:mybookstore/profile/controller.dart';
-import 'package:mybookstore/profile/widgets/profile_avatar.dart';
 import 'package:mybookstore/shared/utils/color_utils.dart';
-import 'package:mybookstore/shared/utils/image_path_utils.dart';
 import 'package:mybookstore/shared/utils/validation_utils.dart';
 import 'package:mybookstore/shared/widgets/app_bar_back_button.dart';
 import 'package:mybookstore/shared/widgets/custom_button.dart';
@@ -28,48 +27,30 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   late TextEditingController storeName;
   late TextEditingController sloganName;
-  late TextEditingController adminName;
-  late TextEditingController password;
-  late TextEditingController repeatPassword;
 
   bool _isValid = false;
 
   void _validate() {
-    final isValidStoreName = requiredValidation(storeName.text) == null;
-    final isValidSlogan = requiredValidation(sloganName.text) == null;
-    final isValidAdminName = requiredValidation(adminName.text) == null;
-    final isValidPassword = passwordValidation(password.text) == null;
-    final isValidRepeatPassword =
-        repeatPasswordValidation(repeatPassword.text, password.text) == null;
-
-    setState(() {
-      _isValid =
-          isValidStoreName &&
-          isValidSlogan &&
-          isValidAdminName &&
-          isValidPassword &&
-          isValidRepeatPassword;
-    });
+    _isValid =
+        requiredValidation(storeName.text) == null &&
+        requiredValidation(sloganName.text) == null;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void initState() {
     storeName = TextEditingController(text: store.name);
     sloganName = TextEditingController(text: store.slogan);
-    adminName = TextEditingController(text: user.name);
-    password = TextEditingController();
-    repeatPassword = TextEditingController();
-
     storeName.addListener(_validate);
     sloganName.addListener(_validate);
-    adminName.addListener(_validate);
-    password.addListener(_validate);
-    repeatPassword.addListener(_validate);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('ProfileEditPage');
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -106,29 +87,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       label: 'Slogan da loja',
                       controller: sloganName,
                       validator: requiredValidation,
-                    ),
-                    CustomTextField(
-                      label: 'Nome do usuário',
-                      controller: adminName,
-                      inputType: TextInputType.name,
-                      validator: requiredValidation,
-                    ),
-                    CustomTextField(
-                      label: 'Senha',
-                      controller: password,
-                      inputType: TextInputType.visiblePassword,
-                      validator: passwordValidation,
-                    ),
-                    CustomTextField(
-                      label: 'Repetir senha',
-                      controller: repeatPassword,
-                      inputType: TextInputType.visiblePassword,
-                      validator: (value) {
-                        return repeatPasswordValidation(
-                          value,
-                          password.value.text,
-                        );
-                      },
                     ),
                   ],
                 ),

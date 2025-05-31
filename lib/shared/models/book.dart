@@ -1,82 +1,71 @@
 import 'dart:convert';
 
 class Book {
-  String author;
-  bool available;
-  String cover;
   int id;
-  int idStore;
-  int rating;
-  String synopsis;
+  DateTime creationDateTime;
   String title;
-  int year;
+  String synopsis;
+  String author;
+  DateTime publicationDate;
+  bool available;
+  int rating;
+  String? cover;
 
   Book({
-    required this.author,
-    required this.available,
-    required this.cover,
     required this.id,
-    required this.idStore,
-    required this.rating,
-    required this.synopsis,
+    required this.creationDateTime,
     required this.title,
-    required this.year,
+    required this.synopsis,
+    required this.author,
+    required this.publicationDate,
+    required this.available,
+    required this.rating,
+    required this.cover,
   });
 
   Book clone() {
     return Book(
-      author: author,
-      available: available,
-      cover: cover,
       id: id,
-      idStore: idStore,
-      rating: rating,
-      synopsis: synopsis,
+      creationDateTime: creationDateTime,
       title: title,
-      year: year,
+      synopsis: synopsis,
+      author: author,
+      publicationDate: publicationDate,
+      available: available,
+      rating: rating,
+      cover: cover,
     );
   }
 
   factory Book.fromMap(Map<String, dynamic> map) {
     return Book(
-      author: map['author'],
-      available: map['available'],
-      cover: map['cover'],
       id: map['id'],
-      idStore: map['idStore'],
-      rating: map['rating'],
-      synopsis: map['synopsis'],
+      creationDateTime: DateTime.parse(map['creationDateTime']),
       title: map['title'],
-      year: map['year'],
+      synopsis: map['synopsis'],
+      author: map['author'],
+      publicationDate: DateTime.parse(map['publicationDate']),
+      available: map['available'],
+      rating: map['rating'],
+      cover: map['cover'],
     );
   }
 
   factory Book.fromJson(String json) {
-    final map = jsonDecode(json);
-    return Book(
-      author: map['author'],
-      available: map['available'],
-      cover: map['cover'],
-      id: map['id'],
-      idStore: map['idStore'],
-      rating: map['rating'],
-      synopsis: map['synopsis'],
-      title: map['title'],
-      year: map['year'],
-    );
+    return Book.fromMap(jsonDecode(json));
   }
 
   String toJson() {
     return jsonEncode({
-      'author': author,
-      'available': available,
-      'cover': cover,
       'id': id,
-      'idStore': idStore,
-      'rating': rating,
-      'synopsis': synopsis,
+      'creationDateTime': creationDateTime.toIso8601String(),
       'title': title,
-      'year': year,
+      'synopsis': synopsis,
+      'author': author,
+      'publicationDate': publicationDate.toIso8601String(),
+      'available': available,
+      'rating': rating,
+      'cover': cover,
     });
   }
 

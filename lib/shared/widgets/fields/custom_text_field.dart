@@ -9,12 +9,13 @@ class CustomTextField extends StatefulWidget {
     required this.label,
     this.inputType,
     this.validator,
-    this.value,
+    String? value,
     this.onChanged,
     this.onTap,
     TextEditingController? controller,
     this.readOnly = false,
-  }) : controller = controller ?? TextEditingController(text: value);
+  }) : value = value ?? controller?.value.text,
+       controller = controller ?? TextEditingController(text: value);
 
   final String? value;
   final String label;

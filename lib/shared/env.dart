@@ -5,7 +5,7 @@ class Env {
 
   static String get baseUrl => _baseUrl;
 
-  static String get store => 'store';
+  static String get store => 'stores';
 
   static String get login => 'auth/login';
 

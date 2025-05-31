@@ -7,8 +7,8 @@ import 'package:mybookstore/shared/widgets/child_builder.dart';
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-class AppModule extends StatelessWidget {
-  const AppModule({super.key, this.isHml = false});
+class MainModule extends StatelessWidget {
+  const MainModule({super.key, this.isHml = false});
 
   final bool isHml;
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybookstore/app_module.dart';
+import 'package:mybookstore/main_module.dart';
 import 'package:mybookstore/shared/env.dart';
 import 'package:mybookstore/shared/utils/preference_utils.dart';
 
@@ -9,5 +9,5 @@ Future<void> main() async {
 
   await PreferenceUtils.init();
 
-  runApp(const AppModule());
+  runApp(const MainModule());
 }
