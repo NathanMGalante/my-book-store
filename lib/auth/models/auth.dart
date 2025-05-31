@@ -7,7 +7,7 @@ class Auth {
   String accessToken;
   String refreshToken;
   final User user;
-  final Store store;
+  final Store? store;
 
   Auth({
     required this.accessToken,
@@ -36,7 +36,7 @@ class Auth {
       accessToken: map['accessToken'],
       refreshToken: map['refreshToken'],
       user: User.fromMap(map['user']),
-      store: Store.fromMap(map['store']),
+      store: map['store'] == null ? null : Store.fromMap(map['store']),
     );
   }
 
@@ -45,7 +45,7 @@ class Auth {
       'accessToken': accessToken,
       'refreshToken': refreshToken,
       'user': user.toMap(),
-      'store': store.toMap(),
+      'store': store?.toMap(),
     });
   }
 }

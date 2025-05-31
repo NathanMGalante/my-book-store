@@ -24,7 +24,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('HomePage');
     return FutureBuilder<List<Book>>(
       future: controller.loadAllBooks(),
       builder: (context, snapshot) {

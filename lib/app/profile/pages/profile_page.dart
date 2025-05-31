@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   User get _user => AuthController().auth!.user;
 
-  Store get _store => AuthController().auth!.store;
+  Store get _store => AuthController().auth!.store!;
 
   @override
   Widget build(BuildContext context) {

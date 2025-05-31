@@ -23,7 +23,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   User get user => AuthController().auth!.user;
 
-  Store get store => AuthController().auth!.store;
+  Store get store => AuthController().auth!.store!;
 
   late TextEditingController storeName;
   late TextEditingController sloganName;

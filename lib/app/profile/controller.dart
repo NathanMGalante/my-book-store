@@ -27,7 +27,7 @@ class ProfileController {
   }) async {
     try {
       isEditing.value = true;
-      Store store = AuthController().auth!.store;
+      Store store = AuthController().auth!.store!;
       await _api.edit(store.id, {
         'name': storeName,
         'slogan': sloganName,

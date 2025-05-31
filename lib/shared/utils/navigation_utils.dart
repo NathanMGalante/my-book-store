@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mybookstore/app/book_edit/pages/book_edit_page.dart';
 import 'package:mybookstore/app/bookmark/pages/bookmark_page.dart';
 import 'package:mybookstore/app/employee/pages/employee_page.dart';
-import 'package:mybookstore/app/home/pages/guest_home_page.dart';
 import 'package:mybookstore/app/home/pages/home_page.dart';
 import 'package:mybookstore/app/profile/pages/profile_page.dart';
 import 'package:mybookstore/auth/controller.dart';
@@ -47,12 +46,6 @@ const List<NavigationItem> _routes = [
     permissions: [Role.admin, Role.employee],
     icon: homeIconImage,
     page: HomePage(),
-  ),
-  NavigationItem(
-    label: 'Home',
-    permissions: [Role.user],
-    icon: homeIconImage,
-    page: GuestHomePage(),
   ),
   NavigationItem(
     label: 'Funcionarios',

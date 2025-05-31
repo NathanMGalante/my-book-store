@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                 InkWell(
                   onTap: () => goTo(context, SignupPage()),
                   child: Text(
-                    'Cadastre sua loja',
+                    'Cadastre-se',
                     style: TextStyle(
                       fontSize: 11.0,
                       color: primaryColor,

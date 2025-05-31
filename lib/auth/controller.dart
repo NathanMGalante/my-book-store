@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:mybookstore/app/home/pages/guest_home_page.dart';
 import 'package:mybookstore/auth/api.dart';
 import 'package:mybookstore/auth/models/auth.dart';
 import 'package:mybookstore/auth/models/user.dart';
 import 'package:mybookstore/auth/pages/login-page.dart';
 import 'package:mybookstore/shared/utils/bloc_utils.dart';
-import 'package:mybookstore/shared/utils/file_utils.dart';
 import 'package:mybookstore/shared/utils/global_utils.dart';
 import 'package:mybookstore/shared/utils/navigation_utils.dart';
 import 'package:mybookstore/shared/utils/preference_utils.dart';
@@ -88,6 +87,9 @@ class AuthController {
   }
 
   Future<void> _redirect(BuildContext context) {
+    if (hasAuthority(Role.user)) {
+      return replacePage(context, GuestHomePage());
+    }
     return replacePage(context, NavigationWrapper());
   }
 
@@ -142,29 +144,36 @@ class AuthController {
     }
   }
 
-  Future<void> register({
+  Future<void> registerUser({
     required BuildContext context,
-    required String storeName,
-    required String sloganName,
-    required String adminName,
+    required String name,
     required String email,
     required String password,
-    required File banner,
-    required File adminImage,
   }) async {
     try {
       isRegistering.value = true;
-      await _api.register({
-        'name': storeName,
-        'slogan': sloganName,
-        'banner': await banner.base64,
-        'admin': {
-          'name': adminName,
-          'photo': await adminImage.base64,
-          'username': email,
-          'password': password,
-        },
-      });
+      await _api.registerUser({'name': name, 'email': email, 'password': password});
+      context.showSnackBar('Usuário registrado com sucesso');
+      Navigator.pop(context);
+    } on DioException catch (ex) {
+      context.showSnackBar(
+        ex.response?.data ?? 'Falha ao registrar usuário',
+        isError: true,
+      );
+      rethrow;
+    } finally {
+      isRegistering.value = false;
+    }
+  }
+
+  Future<void> registerStore({
+    required BuildContext context,
+    required String name,
+    required String slogan,
+  }) async {
+    try {
+      isRegistering.value = true;
+      await _api.registerStore({'name': name, 'slogan': slogan});
       context.showSnackBar('Loja registrada com sucesso');
       Navigator.pop(context);
     } on DioException catch (ex) {
